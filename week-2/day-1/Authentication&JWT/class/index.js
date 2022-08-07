@@ -29,7 +29,7 @@ app.post("/login", async(req,res)=>{
         username:user.username,
         age:user.age,
         id:user._id
-    },"Secret", {
+    },"Secret",{
         expiresIn:"1 hour"
     })
 
