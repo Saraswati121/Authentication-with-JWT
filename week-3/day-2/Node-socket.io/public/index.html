@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatter</title>
+</head>
+<style>
+  /* body{
+    width: 100vw;
+    height: 100vh;
+  } */
+  #container{
+    width: 400px;
+    display: flex;
+  }
+ #forms{
+ display: flex;
+ gap: 12px;
+ position: fixed;
+ bottom: 0;
+ padding: 10px;
+ }
+ #input{
+  width: 350px;
+  padding: 5px;
+  border-radius: 3px;
+ }
+ #messages{
+  display: flex;
+  flex-direction: column;
+ }
+ #messages div{
+  border: 2px solid #0160e6;
+  margin-top: 10px;
+  border-radius: 5px;
+  padding: 12px;
+ }
+</style>
+<body>
+  <div id="container">
+    <div id="messages"> </div>
+    <form id="forms">
+      <input id="input" autocomplete="off" type="text" >
+      <button type="submit" id="send">Send</button>
+    </form>
+   </div>
+
+   <script src="/socket.io/socket.io.js"></script>
+   <script>
+    const ws=io()
+    const form= document.getElementById("forms")
+    const input=document.getElementById("input")
+    const messagediv=document.getElementById("messages")
+
+    form.addEventListener("submit", (e)=>{
+      e.preventDefault()
+
+      const textmsg=input.value
+      ws.emit("new message", textmsg)
+    })
+
+    ws.on("new message",(msg)=>{
+        const span= document.createElement("div")
+        span.innerText=msg
+        messagediv.appendChild(span)
+      })
+
+    ws.on("new user",()=>{
+       const span= document.createElement("div")
+       span.innerText="New user joined chat"
+       messagediv.appendChild(span)
+    })
+
+    ws.on("history",(hs)=>{
+      if(hs.length > 0){
+        for(const h of hs){
+        const span= document.createElement("div")
+        span.innerText=h;
+        messagediv.appendChild(span)
+        }
+      }
+      
+    })
+    // ws.on("message", (msg)=>{
+    //   console.log("Server said:",msg)
+    // })
+   </script>
+   
+</body>
+</html>
